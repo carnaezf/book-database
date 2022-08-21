@@ -1,4 +1,3 @@
-from turtle import title
 from models import (Base, session, 
                     Book, engine)
 import datetime
