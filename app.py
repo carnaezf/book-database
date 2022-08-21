@@ -1,12 +1,10 @@
+from turtle import title
 from models import (Base, session, 
                     Book, engine)
-# main menu - add, search, analisis, exit, view
-# add books to the database
-# edit books 
-# delete books
-# search books
-# data cleaning
-# loop runs program
+import datetime
+import csv
+
+
 def menu():
     while True:
         print("""
@@ -26,6 +24,33 @@ def menu():
                   \rA number from 1-5.
                   \rPress enter to try again.''')
 
+def clean_date(date_str):
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 
+              'July', 'August', 'September', 'October', 'November', 'December']
+    split_date = date_str.split(' ')
+    month = int(months.index(split_date[0]) + 1)
+    day = int(split_date[1].split(',')[0])
+    year = int(split_date[2].split(',')[0])
+    return datetime.date(year, month, day)
+
+def clean_price(price_str):
+    price_float = float(price_str)
+    return int(price_float * 100)
+
+def add_csv():
+    with open('suggested_books.csv') as csvfile:
+        data = csv.reader(csvfile)
+        for row in data:
+            book_in_db = session.query(Book).filter(Book.title==row[0]).one_or_none()
+            if book_in_db == None:
+                title = row[0]
+                date = clean_date(row[2])
+                author = row[1]
+                price = clean_price(row[3])
+                new_book = Book(title=title, author=author, published_date=date, price=price)
+                session.add(new_book)
+        session.commit()
+            
 
 def app():
     app_running = True
@@ -51,5 +76,12 @@ def app():
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-    app()
+    # app()
+    add_csv()
+    
+    for book in session.query(Book):
+        print(book)
+
+
+
 
