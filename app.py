@@ -98,11 +98,13 @@ def app():
             session.add(new_book)
             session.commit()
             print('Book added!')
-            time.sleep(1.51)
+            time.sleep(1.5)
             
         elif choice == '2':
             # View all books
-            pass
+            for book in session.query(Book):
+                print(f'{book.id}   |   {book.title}   |   {book.author}')
+            input('\nPress Enter to tha main menu')
         elif choice == '3':
             # Seach for book
             pass
